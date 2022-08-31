@@ -1,13 +1,8 @@
+const inquirer = require("inquirer");
 const express = require('express');
-// Import and require mysql2
 const mysql = require('mysql2');
-
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+const colors = require('colors');
+const cTable = require('console.table');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -20,20 +15,107 @@ const db = mysql.createConnection(
   console.log(`Connected to the company_db database.`)
 );
 
-// Query database using COUNT() and GROUP BY
-db.query('SELECT COUNT(id) AS total_count FROM favorite_books GROUP BY in_stock', function (err, results) {
-  console.log(results);
-});
+// View functions
+const viewAllDepartments = () => {
+  db.query(`SELECT department.id AS "Department ID", department.name AS "Department" FROM company_db.department`, function (err, results) {
+    console.log('\n');
+    console.log(`*** Viewing All Departments ***`.green);
+    console.table(results);
+    console.log(`*** Query Complete ***`.green);
+    start();
+  });
+}
 
-// Query database using SUM(), MAX(), MIN() AVG() and GROUP BY
-db.query('SELECT SUM(quantity) AS total_in_section, MAX(quantity) AS max_quantity, MIN(quantity) AS min_quantity, AVG(quantity) AS avg_quantity FROM favorite_books GROUP BY section', function (err, results) {
-  console.log(results);
-});
+// App Start
+const start = () => {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "What would you like to do? ",
+        choices: [
+          "View all departments",
+          "View all roles",
+          "View all employees",
+          "Add department",
+          "Add role",
+          "Add employee",
+          "Update employee role",
+          "Update employee manager",
+          "View employees by manager",
+          "View employees by department",
+          "Delete department",
+          "Delete role",
+          "Delete employee",
+          "View total department budget",
+          "Quit",
+        ],
+        name: "choice",
+      },
+    ])
+    .then((response) => {
+      
+      switch (response.choice) {
+        case 'View all departments':
+          viewAllDepartments();
+          break;
+        case 'View all roles':
+          viewAllRoles();
+          break;
+        case 'View all employees':
+          viewAllEmployees();
+          break;
+        case 'Add department':
+          addDepartment();
+          break;
+        case 'Add role':
+          addRole();
+          break;
+        case 'Add employee':
+          addEmployee();
+          break;
+        case 'Update employee role':
+          updateEmployeeRole();
+          break;
+        case 'Update employee manager':
+          updateEmployeeManager();
+          break;
+        case 'View all employees by manager':
+          viewAllEmployeesByManager();
+          break;
+        case 'View all employees by department':
+          viewAllEmployeesByDept();
+          break;
+        case 'Delete department':
+          deleteDepartment();
+          break;
+        case 'Delete role':
+          deleteRole();
+          break;
+        case 'Delete employee':
+          deleteEmployee();
+          break;
+        case 'View total department budget':
+          totalBudget();
+          break;
+        case 'Quit':
+          connection.end();
+          break;
+        default:
+          throw new Error('invalid initial user choice');
+      }
+    });
+};
 
-app.use((req, res) => {
-  res.status(404).end();
-});
+db.connect((err) => {
+  if (err) throw err;
+  console.log(`
+  **********************
+  ** Employee Tracker **
+  **********************`.rainbow + `
+  Welcome to the Employee Tracker Company Database!
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  ` + `********** Database Connection Complete **********`.green
+  )
+  start();
 });
