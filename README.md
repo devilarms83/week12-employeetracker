@@ -52,9 +52,13 @@ THEN I am prompted to select an employee to update and their new role and this i
   
   You’ll need to use the MySQL2 package to connect to your MySQL database and perform queries, the Inquirer package to interact with the user via the command line, and the console.table package to print MySQL rows to the console.
 
-  Screenshot:
+  Screenshots:
 
-  ![Main Menu Image](./readmeIMG/wk11-mainmenu.png)
+  ![Start Menu Image](./Assets/wk12-startmenu.png)
+
+  ![Employee View Image](./Assets/wk12-employeeId.png)
+
+  Here's a link to the video: [Employee Tracker Video](https://drive.google.com/file/d/1MHfyaKHndVIhAu6nVxL2t9iown4cCzSz/view?usp=sharing)
   
   ## [License](#table-of-contents)
 
